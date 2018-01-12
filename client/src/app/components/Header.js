@@ -1,10 +1,8 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
-import Payments from "./Payments";
 
 class Header extends Component {
-
     renderContent() {
         switch(this.props.auth) {
             case null:
@@ -13,15 +11,31 @@ class Header extends Component {
                 return <li><a href="/auth/google">Login With Google</a></li>;
             default:
             return [
-                <li key="1"><Payments /></li>,
                 <li key="2" style={{margin: '0 10px'}}>Credits: {this.props.auth.credits}</li>,
                 <li key="3"><a href="/api/logout">Logout</a></li>
             ];
         }
     }
 
+    renderHomeworks() {
+        return (
+            <nav>
+                <div className="nav-wrapper">
+                    <Link to={"/"}
+                        className="left brand-logo"
+                        style={{marginLeft: '10px'}}
+                    >
+                        CSS 490
+                    </Link>
+                    <ul className="right">
+                        <li key="1"><Link to={"/homework1"}>Homework1</Link></li>,
+                    </ul>
+                </div>
+            </nav>
+        );
+    }
+
     render() {
-        //console.log(this.props);
         return (
             <nav>
                 <div className="nav-wrapper">
@@ -29,10 +43,12 @@ class Header extends Component {
                         className="left brand-logo"
                         style={{marginLeft: '10px'}}
                     >
-                        Emaily
+                        CSS 490
                     </Link>
                     <ul className="right">
-                        {this.renderContent()}
+                        <ul className="right">
+                            <li key="1"><Link to={"/homework1"}>Homework1</Link></li>
+                        </ul>
                     </ul>
                 </div>
             </nav>

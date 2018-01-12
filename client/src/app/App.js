@@ -1,15 +1,11 @@
 import React, { Component } from "react";
 import { BrowserRouter, Route } from "react-router-dom";
-import Header from "./components/Header";
 import { connect } from "react-redux";
 import * as actions from "../actions";
-import Landing from "./components/Landing";
-import Dashboard from "./components/Dashboard";
 
-//const Header = () => <h2>Header</h2>;
-//const Dashboard = () => <h2>Dashboard</h2>;
-const SurveyNew = () => <h2>SurveyNew</h2>;
-//const Landing = () => <h2>Landing</h2>;
+import Header from "./components/Header";
+import Landing from "./components/Landing";
+import Homework1 from "./components/Homework1";
 
 class App extends Component {
     componentDidMount() {
@@ -21,10 +17,9 @@ class App extends Component {
             <div>
                 <BrowserRouter>
                     <div>
-                        {/* <Header /> */}
+                        <Header />
                         <Route exact path="/" component={Landing} />
-                        <Route exact path="/surveys" component={Dashboard} />
-                        <Route exact path="/surveys/new" component={SurveyNew} />
+                        <Route exact path="/homework1" component={Homework1} />
                     </div>
                 </BrowserRouter>
             </div>
