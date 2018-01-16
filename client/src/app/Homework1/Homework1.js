@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 //import SelectImage from "./SelectImage";
-import { intensitySort, colorCodeSort, findDistance, testGetPixels } from "./imageSorter";
+import { intensitySort, colorCodeSort, findDistance, testGetPixels1, testGetPixels3 } from "./imageSorter";
 
 var images = [];
 var imageStyle = {
@@ -25,7 +25,8 @@ class Landing extends Component {
 
     handleImageClick(index) {
         this.setState({selectedImage:index});
-        testGetPixels();
+        console.log(testGetPixels3());
+        //console.log(intensitySort());
         //alert(index);
     }
 
