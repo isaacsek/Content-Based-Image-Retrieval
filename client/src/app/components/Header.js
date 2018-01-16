@@ -28,7 +28,7 @@ class Header extends Component {
                         CSS 490: Multimedia
                     </Link>
                     <ul className="right">
-                        <li key="1"><Link to={"/homework1"}>Homework1</Link></li>,
+                        <li key="1"><Link to={"/homework1"}>Homework 1</Link></li>,
                     </ul>
                 </div>
             </nav>
@@ -38,7 +38,7 @@ class Header extends Component {
     render() {
         return (
             <nav>
-                <div className="nav-wrapper">
+                <div className="nav-wrapper blue darken-3">
                     <Link to={this.props.auth ? "/surveys" : "/"}
                         className="left brand-logo"
                         style={{marginLeft: '10px'}}
@@ -47,7 +47,7 @@ class Header extends Component {
                     </Link>
                     <ul className="right">
                         <ul className="right">
-                            <li key="1"><Link to={"/homework1"}>Homework1</Link></li>
+                            <li key="1"><Link to={"/homework1"}>Homework 1</Link></li>
                         </ul>
                     </ul>
                 </div>

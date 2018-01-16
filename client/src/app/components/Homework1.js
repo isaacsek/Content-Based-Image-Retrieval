@@ -77,7 +77,7 @@ class Landing extends Component {
                     <span className="mr-2"/>
                     <div style={inlineStyle}  className="card" >
                         <div className="card-image">
-                            <img style={imageStyle} src={process.env.PUBLIC_URL + '/images/' + (i + 2) + '.jpg'} onClick={this.handleImageClick.bind(this, i + 1)} alt={i + 1} />
+                            <img style={imageStyle} src={process.env.PUBLIC_URL + '/images/' + (i + 2) + '.jpg'} onClick={this.handleImageClick.bind(this, i + 2)} alt={i + 2} />
                             <span className="card-title">Image {i + 2}</span>
                         </div>
                     </div>
@@ -85,7 +85,7 @@ class Landing extends Component {
                     <span className="mr-2"/>
                     <div style={inlineStyle}  className="card" >
                         <div className="card-image">
-                            <img style={imageStyle} src={process.env.PUBLIC_URL + '/images/' + (i + 3) + '.jpg'} onClick={this.handleImageClick.bind(this, i + 1)} alt={i + 1} />
+                            <img style={imageStyle} src={process.env.PUBLIC_URL + '/images/' + (i + 3) + '.jpg'} onClick={this.handleImageClick.bind(this, i + 3)} alt={i + 3} />
                             <span className="card-title">Image {i + 3}</span>
                         </div>
                     </div>
@@ -93,7 +93,7 @@ class Landing extends Component {
                     <span className="mr-2"/>
                     <div style={inlineStyle}  className="card" >
                         <div className="card-image">
-                            <img style={imageStyle} src={process.env.PUBLIC_URL + '/images/' + (i + 4) + '.jpg'} onClick={this.handleImageClick.bind(this, i + 1)} alt={i + 1} />
+                            <img style={imageStyle} src={process.env.PUBLIC_URL + '/images/' + (i + 4) + '.jpg'} onClick={this.handleImageClick.bind(this, i + 4)} alt={i + 4} />
                             <span className="card-title">Image {i + 4}</span>
                         </div>
                     </div>
@@ -115,11 +115,29 @@ class Landing extends Component {
         }
     }
 
+    renderSelectedImage() {
+        return (
+
+            <div style={inlineStyle}  className="card" >
+                <div className="card-image">
+                    <img style={imageStyle} src={process.env.PUBLIC_URL + '/images/' + (this.state.selectedImage) + '.jpg'} alt={1} />
+                    <span className="card-title">Image {this.state.selectedImage}</span>
+                </div>
+            </div>
+        );
+    }
+
     renderResults() {
         return (
-            <div>
-                <h3>Results</h3>
-                <button className="btn" onClick={() => this.setState({selectedImage:null})}>Back</button>
+            <div style={{marginTop: '25px', textAlign:'center'}}>
+                <h5>Selected Image</h5>
+                <div>
+                    {this.renderSelectedImage()}
+                </div>
+                <div><h5>Results</h5></div>
+                <div>Insert Results Here...</div>
+
+                <button className="btn red" style={{marginTop:'30px'}} onClick={() => this.setState({selectedImage:null})}>Back</button>
             </div>
         );
     }
@@ -134,17 +152,17 @@ class Landing extends Component {
                 </select>
 
                 <div style={{marginTop:'25px', marginBottom:'15px'}} >
-                    <button style={{marginRight: '50px'}} className="waves-effect waves-light btn" onClick={(evt) => this.changePage(this.state.page - 1)}>Previous</button>
+                    <button style={{marginRight: '50px'}} className="waves-effect waves-light btn green" onClick={(evt) => this.changePage(this.state.page - 1)}>Prev</button>
                     <div style={{display:'inline-block'}}><strong>Page: {this.state.page}</strong></div>
-                    <button style={{marginLeft: '50px'}} className="waves-effect waves-light btn" onClick={(evt) => this.changePage(this.state.page + 1)}>Next</button>
+                    <button style={{marginLeft: '50px'}} className="waves-effect waves-light btn green" onClick={(evt) => this.changePage(this.state.page + 1)}>Next</button>
                 </div>
 
                 {this.renderImages()}
 
                 <div style={{marginBottom:'15px'}} >
-                    <button style={{marginRight: '50px'}} className="waves-effect waves-light btn" onClick={(evt) => this.changePage(this.state.page - 1)}>Previous</button>
+                    <button style={{marginRight: '50px'}} className="waves-effect waves-light btn green" onClick={(evt) => this.changePage(this.state.page - 1)}>Prev</button>
                     <div style={{display:'inline-block'}}><strong>Page: {this.state.page}</strong></div>
-                    <button style={{marginLeft: '50px'}} className="waves-effect waves-light btn" onClick={(evt) => this.changePage(this.state.page + 1)}>Next</button>
+                    <button style={{marginLeft: '50px'}} className="waves-effect waves-light btn green"  onClick={(evt) => this.changePage(this.state.page + 1)}>Next</button>
                 </div>
             </center>
         );
@@ -163,25 +181,7 @@ class Landing extends Component {
         return (
             <div style={{textAlign:'center'}}>
                 <h3 className="mt-2 mb-2">Simple Content-Based Image Retrieval System</h3>
-
-
                 {this.renderPage()}
-
-                {/* <div style={{marginTop:'25px'}} className="row">
-                    <div className="col s8">
-                        <div style={{marginBottom:'15px'}} >
-                            <button className="btn float-left mr-2" onClick={(evt) => this.changePage(this.state.page - 1)}>Previous</button>
-                            <div style={{display:'inline-block'}}>Page: {this.state.page}</div>
-                            <button className="btn right-align ml-2" onClick={(evt) => this.changePage(this.state.page + 1)}>Next</button>
-                        </div>
-
-                        {this.renderImages()}
-                    </div>
-                    <div className="col s4">
-                        {this.renderResults()}
-                    </div>
-                </div> */}
-
             </div>
         );
     }
