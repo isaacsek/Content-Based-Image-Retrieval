@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 //import SelectImage from "./SelectImage";
-import { intensitySort, colorCodeSort, findDistance, testGetPixels1, testGetPixels3 } from "./imageSorter";
+import { intensitySort, colorCodeSort, findDistances } from "./imageSorter";
 
 var images = [];
 var imageStyle = {
@@ -25,9 +25,33 @@ class Landing extends Component {
 
     handleImageClick(index) {
         this.setState({selectedImage:index});
-        console.log(testGetPixels3());
+        //console.log(intensitySort());
+        //console.log(colorCodeSort());
+        //console.log("result", colorCodeSort());
         //console.log(intensitySort());
         //alert(index);
+
+        // colorCodeSort(function(buckets) {
+        //     console.log("done", buckets);
+        // });
+
+        colorCodeSort(function(buckets) {
+            console.log("done", buckets);
+            const results = [];
+            for(let i = 1; i <= 100; i++) {
+                findDistances(buckets, 1, i, function(distance) {
+                    //console.log("distance to", i, distance);
+                    const temp = {};
+                    temp.index = i;
+                    temp.distance = distance;
+                    results.push(JSON.parse(JSON.stringify(temp)));
+                })
+            }
+            results.sort(function(a, b) {
+                return a.distance - b.distance;
+            });
+            console.log("results", results);
+        });
     }
 
     renderImages() {

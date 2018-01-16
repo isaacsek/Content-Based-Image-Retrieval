@@ -4,73 +4,28 @@ const Jimp = window.Jimp;
 export  function get2Bits(int) {
     let a = (int >> 7) & 1;
     let b = (int >> 6) & 1;
-    let c = "" + a.toString() + b.toString();
-    //console.log(c);
     return "" + a.toString() + b.toString();
 }
 
-export function testGetPixels3() {
-    const finalBuckets = [];
-
-    // for every imaage
-    for(let x = 0; x < 1; x++) {
-        const file = process.env.PUBLIC_URL + "/images/" + (x + 1) + ".jpg";
-        // create empty array
-        const buckets = [];
-
-        for(let i = 0; i < 64; i++) {
-            buckets.push(0);
-        }
-
-    	Jimp.read(file, function(err, image) {
-            image.scan(0, 0, image.bitmap.width, image.bitmap.height,  function (x, y, idx) {
-                // x, y is the position of this pixel on the image
-                // idx is the position start position of this rgba tuple in the bitmap Buffer
-                // this is the image
-
-                let red   = this.bitmap.data[ idx + 0 ];
-                let green = this.bitmap.data[ idx + 1 ];
-                let blue  = this.bitmap.data[ idx + 2 ];
-
-                let redBits = get2Bits(red);
-                let greenBits = get2Bits(green);
-                let blueBits = get2Bits(blueBits);
-                let str = redBits + greenBits + blueBits;
-
-                let bucket = parseInt(str, 2);
-                //console.log(redBits, greenBits,  blueBits, str, bucket);
-
-                buckets[bucket]++;
-            });
-            let count = 0;
-            buckets.forEach(function(x) {
-                    count += x;
-            })
-            console.log("count", count);
-            finalBuckets.push(buckets);
-            console.log((finalBuckets));
-        });
+function createEmptyArray(length) {
+    const intensities = [];
+    for(let i = 0; i < length; i++) {
+        intensities.push(0);
     }
+    return JSON.parse(JSON.stringify(intensities));
 }
 
-export function testGetPixels1() {
+function calculateIntensity(r, g, b) {
+    return (.299 *  r) + (.578 * g) + (.114 * b);
+}
+
+export function intensitySort(cb) {
     const finalBuckets = [];
-
-    // for every imaage
     for(let x = 0; x < 100; x++) {
-        const file = process.env.PUBLIC_URL + "/images/" + (x + 1) + ".jpg";
-        // create empty array
-        const intensities = [];
-        for(let i = 0; i < 25; i++) {
-            intensities.push(0);
-        }
+        const intensities = createEmptyArray(25);
 
-    	Jimp.read(file, function(err, image) {
+    	Jimp.read(process.env.PUBLIC_URL + "/images/" + (x + 1) + ".jpg", function(err, image) {
             image.scan(0, 0, image.bitmap.width, image.bitmap.height, function (x, y, idx) {
-                // x, y is the position of this pixel on the image
-                // idx is the position start position of this rgba tuple in the bitmap Buffer
-                // this is the image
-
                 let red   = this.bitmap.data[ idx + 0 ];
                 let green = this.bitmap.data[ idx + 1 ];
                 let blue  = this.bitmap.data[ idx + 2 ];
@@ -83,107 +38,56 @@ export function testGetPixels1() {
                 else {
                     intensities[bucket]++;
                 }
-                // rgba values run from 0 - 255
-                // e.g. this.bitmap.data[idx] = 0; // removes red from this pixel
             });
+            //intensities.push(image.bitmap.width * image.bitmap.height);
+            finalBuckets.push(JSON.parse(JSON.stringify(intensities)));
 
-
-            finalBuckets.push(intensities);
-            //finalBuckets.push(JSON.parse(JSON.stringify(intensities)));
-            console.log((finalBuckets));
+            if(finalBuckets.length === 100) {
+                cb(finalBuckets);
+            }
         });
     }
 }
 
-export function testGetPixels2() {
+export function colorCodeSort(cb) {
     const finalBuckets = [];
-
-    // for every imaage
     for(let x = 0; x < 100; x++) {
-        const file = process.env.PUBLIC_URL + "/images/" + (x + 1) + ".jpg";
-        // create empty array
-        const intensities = [];
-        for(let i = 0; i < 25; i++) {
-            intensities.push(0);
-        }
+        const buckets = createEmptyArray(64);
 
-    	Jimp.read(file, function(err, image) {
-    		if (err) throw err;
+        Jimp.read(process.env.PUBLIC_URL + "/images/" + (x + 1) + ".jpg", function(err, image) {
+            image.scan(0, 0, image.bitmap.width, image.bitmap.height,  function (x, y, idx) { // 0, 0, image.bitmap.width, image.bitmap.height,
+                let red   = this.bitmap.data[ idx + 0 ];
+                let green = this.bitmap.data[ idx + 1 ];
+                let blue  = this.bitmap.data[ idx + 2 ];
+                let redBits = get2Bits(red);
+                let greenBits = get2Bits(green);
+                let blueBits = get2Bits(blue);
+                let str = redBits + greenBits + blueBits;
+                let bucket = parseInt(str, 2);
+                buckets[bucket]++;
+            });
+            //buckets.push(image.bitmap.width * image.bitmap.height);
+            finalBuckets.push(JSON.parse(JSON.stringify(buckets)));
 
-            // for every pixel in the image
-            for(let row = 0; row < image.bitmap.width; row++) {
-                for(let col = 0; col < image.bitmap.height; col++) {
-
-                    // get bucket that pixel goes in
-                    const rgb = Jimp.intToRGBA(image.getPixelColor(row, col));
-                    const intensity = calculateIntensity(rgb.r, rgb.g, rgb.b);
-                    const bucket = Math.floor(intensity / 10);
-
-                    if(bucket > 23) {
-                        intensities[24]++;
-                    }
-                    else {
-                        intensities[bucket]++;
-                    }
-                }
+            if(finalBuckets.length === 100) {
+                cb(finalBuckets);
             }
-            finalBuckets.push(intensities);
-            //finalBuckets.push(JSON.parse(JSON.stringify(intensities)));
-            console.log((finalBuckets));
         });
     }
 }
 
-function createEmptyArray() {
-    const intensities = [];
-    for(let i = 0; i < 25; i++) {
-        intensities.push(0);
+export function findDistances(buckets, img1, img2, cb) {
+    let distance = 0;
+    let a = img1 - 1;
+    let b = img2 - 1;
+
+    for(let bucket = 0; bucket < buckets[0].length; bucket++) {
+        let aVal = buckets[a][bucket] / 98034;
+        let bVal = buckets[b][bucket] / 98034;
+        //console.log("before", aVal, bVal, distance);
+        let d = Math.abs(aVal - bVal);
+        distance = distance + d;
+        //console.log("After", distance, d);
     }
-    return intensities.splice();
-}
-
-function calculateIntensity(r, g, b) {
-    return (.299 *  r) + (.578 * g) + (.114 * b);
-}
-
-export function sortIntoIntensityBuckets(intensities, image) {
-    for(let row = 0; row < image.bitmap.width; row++) {
-        for(let col = 0; col < image.bitmap.height; col++) {
-
-            // get bucket that pixel goes in
-            const rgb = Jimp.intToRGBA(image.getPixelColor(row, col));
-            const intensity = calculateIntensity(rgb.r, rgb.g, rgb.b);
-            const bucket = Math.floor(intensity / 10);
-
-            if(bucket > 23) {
-                intensities[24]++;
-            }
-            else {
-                intensities[bucket]++;
-            }
-        }
-    }
-    return intensities.slice();
-}
-
-export async function intensitySort(index) {
-    const finalBuckets = [];
-
-    // for every imaage
-    for(var x = 0; x < 100; x++) {
-        Jimp.read(process.env.PUBLIC_URL + "/images/" + (x + 1) + ".jpg").then(function(image) {
-            const intensityBucket = createEmptyArray();
-            sortIntoIntensityBuckets(intensityBucket, image);
-            finalBuckets.push(intensityBucket);
-            console.log(finalBuckets);
-        });
-    }
-}
-
-export function colorCodeSort(index) {
-	return index;
-}
-
-export function findDistance(a, b) {
-	return "dist";
+    cb(distance);
 }
