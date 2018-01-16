@@ -25,7 +25,7 @@ class Header extends Component {
                         className="left brand-logo"
                         style={{marginLeft: '10px'}}
                     >
-                        CSS 490
+                        CSS 490: Multimedia
                     </Link>
                     <ul className="right">
                         <li key="1"><Link to={"/homework1"}>Homework1</Link></li>,
@@ -43,7 +43,7 @@ class Header extends Component {
                         className="left brand-logo"
                         style={{marginLeft: '10px'}}
                     >
-                        CSS 490
+                        CSS 490: Multimedia
                     </Link>
                     <ul className="right">
                         <ul className="right">

@@ -31,3 +31,14 @@
   top: 25%;
   transform: translateY(-25%);
 }
+
+select {
+  text-align: center;
+  text-align-last: center;
+  /* webkit*/
+}
+
+option {
+    text-align: center;
+    /* webkit*/
+}
