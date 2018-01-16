@@ -115,33 +115,6 @@ class Landing extends Component {
         }
     }
 
-    renderSelectedImage() {
-        return (
-
-            <div style={inlineStyle}  className="card" >
-                <div className="card-image">
-                    <img style={imageStyle} src={process.env.PUBLIC_URL + '/images/' + (this.state.selectedImage) + '.jpg'} alt={1} />
-                    <span className="card-title">Image {this.state.selectedImage}</span>
-                </div>
-            </div>
-        );
-    }
-
-    renderResults() {
-        return (
-            <div style={{marginTop: '25px', textAlign:'center'}}>
-                <h5>Selected Image</h5>
-                <div>
-                    {this.renderSelectedImage()}
-                </div>
-                <div><h5>Results</h5></div>
-                <div>Insert Results Here...</div>
-
-                <button className="btn red" style={{marginTop:'30px'}} onClick={() => this.setState({selectedImage:null})}>Back</button>
-            </div>
-        );
-    }
-
     renderSelectImagePage() {
         return (
             <center>
@@ -168,21 +141,9 @@ class Landing extends Component {
         );
     }
 
-    renderPage() {
-        if(!this.state.selectedImage) {
-            return this.renderSelectImagePage();
-        }
-        else {
-            return this.renderResults();
-        }
-    }
-
     render() {
         return (
-            <div style={{textAlign:'center'}}>
-                <h3 className="mt-2 mb-2">Simple Content-Based Image Retrieval System</h3>
-                {this.renderPage()}
-            </div>
+            this.renderSelectImagePage()
         );
     }
 }

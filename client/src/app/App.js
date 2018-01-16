@@ -3,9 +3,9 @@ import { BrowserRouter, Route } from "react-router-dom";
 import { connect } from "react-redux";
 import * as actions from "../actions";
 
-import Header from "./components/Header";
-import Landing from "./components/Landing";
-import Homework1 from "./components/Homework1";
+import Header from "./Header/Header";
+import Landing from "./Landing/Landing";
+import Homework1 from "./Homework1/Homework1";
 
 class App extends Component {
     componentDidMount() {
