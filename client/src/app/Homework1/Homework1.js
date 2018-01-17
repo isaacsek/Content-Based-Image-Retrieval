@@ -204,14 +204,13 @@ class Landing extends Component {
     renderResults() {
         return (
             <div style={{marginTop: '25px', textAlign:'center'}}>
-                <h5>Selected Image</h5>
                 <button className="btn red" style={{marginTop:'15px', marginBottom:'15px'}} onClick={() => this.setState({selectedImage:null})}>Back</button>
+                <h5>Selected Image</h5>
                 <div>
                     {this.renderSelectedImage()}
                 </div>
                 <div><h5>Results</h5></div>
                 {this.renderImageResults()}
-
                 <button className="btn red" style={{marginTop:'15px', marginBottom:'15px'}} onClick={() => this.setState({selectedImage:null})}>Back</button>
             </div>
         );
