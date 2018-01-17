@@ -1,5 +1,6 @@
 require('jimp/browser/lib/jimp');
 const Jimp = window.Jimp;
+var getPixels = require("get-pixels")
 
 export  function get2Bits(int) {
     let a = (int >> 7) & 1;
@@ -39,13 +40,40 @@ export function intensitySort(cb) {
                     intensities[bucket]++;
                 }
             });
-            //intensities.push(image.bitmap.width * image.bitmap.height);
             finalBuckets.push(JSON.parse(JSON.stringify(intensities)));
-
+            //console.log(finalBuckets);
             if(finalBuckets.length === 100) {
                 cb(finalBuckets);
             }
         });
+
+        // getPixels(process.env.PUBLIC_URL + "/images/" + (x + 1) + ".jpg", function(err, pixels) {
+        //     if(err) {
+        //         console.log("Bad image path")
+        //         return
+        //     }
+        //     for(let i = 0; i < pixels.size; i+=4) {
+        //         let red   = pixels.data[ i + 0 ];
+        //         let green = pixels.data[ i + 1 ];
+        //         let blue  = pixels.data[ i + 2 ];
+        //         let intensity = calculateIntensity(red, green, blue);
+        //         let bucket = Math.floor(intensity / 10);
+        //         //console.log(intensities);
+        //         if(bucket >= 24) {
+        //             intensities[24]++;
+        //         }
+        //         else {
+        //             intensities[bucket]++;
+        //         }
+        //     }
+        //     //console.log(intensities);
+        //     //console.log("got pixels", pixels);
+        //     finalBuckets.push(JSON.parse(JSON.stringify(intensities)));
+        //     //console.log(finalBuckets);
+        //     if(finalBuckets.length === 100) {
+        //         cb(finalBuckets);
+        //     }
+        // });
     }
 }
 
@@ -82,12 +110,12 @@ export function findDistances(buckets, img1, img2, cb) {
     let b = img2 - 1;
 
     for(let bucket = 0; bucket < buckets[0].length; bucket++) {
-        let aVal = buckets[a][bucket] / 98034;
-        let bVal = buckets[b][bucket] / 98034;
-        //console.log("before", aVal, bVal, distance);
-        let d = Math.abs(aVal - bVal);
-        distance = distance + d;
-        //console.log("After", distance, d);
+        let aVal = buckets[img1 - 1][bucket] / 98034;
+        let bVal = buckets[img2 - 1][bucket] / 98034;
+        distance += Math.abs(aVal - bVal);
+
+        if(bucket === buckets[0].length - 1) {
+            cb(distance);
+        }
     }
-    cb(distance);
 }

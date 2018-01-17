@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 //import SelectImage from "./SelectImage";
 import { intensitySort, colorCodeSort, findDistances } from "./imageSorter";
+import { intensityHistogram} from "./output";
+import { colorHistogram }from "./output2";
 
 var images = [];
 var imageStyle = {
@@ -20,10 +22,11 @@ class Landing extends Component {
             page: 1,
             selectedImage: null,
             results: null,
+            method:1,
         };
     }
 
-    handleImageClick(index) {
+    handleImageClick(index, self) {
         this.setState({selectedImage:index});
         //console.log(intensitySort());
         //console.log(colorCodeSort());
@@ -35,12 +38,12 @@ class Landing extends Component {
         //     console.log("done", buckets);
         // });
 
-        colorCodeSort(function(buckets) {
-            console.log("done", buckets);
+        if(this.state.method === 1) {
+            //console.log("self", self.state.selectedImage);
             const results = [];
+            let buckets = intensityHistogram;
             for(let i = 1; i <= 100; i++) {
-                findDistances(buckets, 1, i, function(distance) {
-                    //console.log("distance to", i, distance);
+                findDistances(buckets, index, i, function(distance) {
                     const temp = {};
                     temp.index = i;
                     temp.distance = distance;
@@ -50,8 +53,63 @@ class Landing extends Component {
             results.sort(function(a, b) {
                 return a.distance - b.distance;
             });
-            console.log("results", results);
-        });
+            //console.log(JSON.stringify(results));
+            self.setState({results:results});
+
+
+            // intensitySort(function(buckets) {
+            //     console.log(JSON.stringify(buckets));
+            //     const results = [];
+            //     for(let i = 1; i <= 100; i++) {
+            //         findDistances(buckets, 1, i, function(distance) {
+            //             const temp = {};
+            //             temp.index = i;
+            //             temp.distance = distance;
+            //             results.push(JSON.parse(JSON.stringify(temp)));
+            //         })
+            //     }
+            //     results.sort(function(a, b) {
+            //         return a.distance - b.distance;
+            //     });
+            //     //console.log(JSON.stringify(results));
+            //     self.setState({results:results});
+            // });
+        }
+        else {
+            const results = [];
+            let buckets = colorHistogram;
+            for(let i = 1; i <= 100; i++) {
+                findDistances(buckets, index, i, function(distance) {
+                    const temp = {};
+                    temp.index = i;
+                    temp.distance = distance;
+                    results.push(JSON.parse(JSON.stringify(temp)));
+                })
+            }
+            results.sort(function(a, b) {
+                return a.distance - b.distance;
+            });
+            //console.log(JSON.stringify(results));
+            self.setState({results:results});
+
+            // colorCodeSort(function(buckets) {
+            //     console.log(JSON.stringify(buckets));
+            //     const results = [];
+            //     for(let i = 1; i <= 100; i++) {
+            //         findDistances(buckets, 1, i, function(distance) {
+            //             const temp = {};
+            //             temp.index = i;
+            //             temp.distance = distance;
+            //             results.push(JSON.parse(JSON.stringify(temp)));
+            //         })
+            //     }
+            //     results.sort(function(a, b) {
+            //         return a.distance - b.distance;
+            //     });
+            //     //console.log(JSON.stringify(results));
+            //     self.setState({results:results});
+            // });
+        }
     }
 
     renderImages() {
@@ -78,14 +136,14 @@ class Landing extends Component {
                 <div key={i}>
                     <div style={inlineStyle} className="card">
                         <div className="card-image">
-                            <img style={imageStyle} src={process.env.PUBLIC_URL + '/images/' + (i) + '.jpg'}  onClick={this.handleImageClick.bind(this, i)} alt={i}/>
+                            <img style={imageStyle} src={process.env.PUBLIC_URL + '/images/' + (i) + '.jpg'}  onClick={this.handleImageClick.bind(this, i, this)} alt={i}/>
                             <span className="card-title">Image {i}</span>
                         </div>
                     </div>
                     <span className="mr-2"/>
                     <div style={inlineStyle}  className="card" >
                         <div className="card-image">
-                            <img style={imageStyle} src={process.env.PUBLIC_URL + '/images/' + (i + 1) + '.jpg'} onClick={this.handleImageClick.bind(this, i + 1)} alt={i + 1} />
+                            <img style={imageStyle} src={process.env.PUBLIC_URL + '/images/' + (i + 1) + '.jpg'} onClick={this.handleImageClick.bind(this, i + 1, this)} alt={i + 1} />
                             <span className="card-title">Image {i + 1}</span>
                         </div>
                     </div>
@@ -93,7 +151,7 @@ class Landing extends Component {
                     <span className="mr-2"/>
                     <div style={inlineStyle}  className="card" >
                         <div className="card-image">
-                            <img style={imageStyle} src={process.env.PUBLIC_URL + '/images/' + (i + 2) + '.jpg'} onClick={this.handleImageClick.bind(this, i + 2)} alt={i + 2} />
+                            <img style={imageStyle} src={process.env.PUBLIC_URL + '/images/' + (i + 2) + '.jpg'} onClick={this.handleImageClick.bind(this, i + 2, this)} alt={i + 2} />
                             <span className="card-title">Image {i + 2}</span>
                         </div>
                     </div>
@@ -101,7 +159,7 @@ class Landing extends Component {
                     <span className="mr-2"/>
                     <div style={inlineStyle}  className="card" >
                         <div className="card-image">
-                            <img style={imageStyle} src={process.env.PUBLIC_URL + '/images/' + (i + 3) + '.jpg'} onClick={this.handleImageClick.bind(this, i + 3)} alt={i + 3} />
+                            <img style={imageStyle} src={process.env.PUBLIC_URL + '/images/' + (i + 3) + '.jpg'} onClick={this.handleImageClick.bind(this, i + 3, this)} alt={i + 3} />
                             <span className="card-title">Image {i + 3}</span>
                         </div>
                     </div>
@@ -109,7 +167,7 @@ class Landing extends Component {
                     <span className="mr-2"/>
                     <div style={inlineStyle}  className="card" >
                         <div className="card-image">
-                            <img style={imageStyle} src={process.env.PUBLIC_URL + '/images/' + (i + 4) + '.jpg'} onClick={this.handleImageClick.bind(this, i + 4)} alt={i + 4} />
+                            <img style={imageStyle} src={process.env.PUBLIC_URL + '/images/' + (i + 4) + '.jpg'} onClick={this.handleImageClick.bind(this, i + 4, this)} alt={i + 4} />
                             <span className="card-title">Image {i + 4}</span>
                         </div>
                     </div>
@@ -147,22 +205,87 @@ class Landing extends Component {
         return (
             <div style={{marginTop: '25px', textAlign:'center'}}>
                 <h5>Selected Image</h5>
+                <button className="btn red" style={{marginTop:'15px', marginBottom:'15px'}} onClick={() => this.setState({selectedImage:null})}>Back</button>
                 <div>
                     {this.renderSelectedImage()}
                 </div>
                 <div><h5>Results</h5></div>
-                <div>Insert Results Here...</div>
+                {this.renderImageResults()}
 
-                <button className="btn red" style={{marginTop:'30px'}} onClick={() => this.setState({selectedImage:null})}>Back</button>
+                <button className="btn red" style={{marginTop:'15px', marginBottom:'15px'}} onClick={() => this.setState({selectedImage:null})}>Back</button>
             </div>
         );
+    }
+
+    renderImageResults() {
+
+        if(!this.state.results) {
+            return <div>Insert Results Here...</div>;
+        }
+        else {
+            const resultImages = [];
+            for(let i = 0; i < 100; i+=5) {
+                resultImages.push(
+                    <div key={i}>
+                        <div style={inlineStyle} className="card">
+                            <div className="card-image">
+                                <img style={imageStyle} src={process.env.PUBLIC_URL + '/images/' + (this.state.results[i].index) + '.jpg'} alt={i}/>
+                                <span className="card-title">Image {this.state.results[i].index}</span>
+                            </div>
+                        </div>
+                        <span className="mr-2"/>
+                        <div style={inlineStyle}  className="card" >
+                            <div className="card-image">
+                                <img style={imageStyle} src={process.env.PUBLIC_URL + '/images/' + (this.state.results[i + 1].index)  + '.jpg'} alt={i + 1} />
+                                <span className="card-title">Image {this.state.results[i + 1].index}</span>
+                            </div>
+                        </div>
+
+                        <span className="mr-2"/>
+                        <div style={inlineStyle}  className="card" >
+                            <div className="card-image">
+                                <img style={imageStyle} src={process.env.PUBLIC_URL + '/images/' + (this.state.results[i + 2].index)  + '.jpg'} alt={i + 2} />
+                                <span className="card-title">Image {this.state.results[i + 2].index}</span>
+                            </div>
+                        </div>
+
+                        <span className="mr-2"/>
+                        <div style={inlineStyle}  className="card" >
+                            <div className="card-image">
+                                <img style={imageStyle} src={process.env.PUBLIC_URL + '/images/' + (this.state.results[i + 3].index)  + '.jpg'}  alt={i + 3} />
+                                <span className="card-title">Image {this.state.results[i + 3].index}</span>
+                            </div>
+                        </div>
+
+                        <span className="mr-2"/>
+                        <div style={inlineStyle}  className="card" >
+                            <div className="card-image">
+                                <img style={imageStyle} src={process.env.PUBLIC_URL + '/images/' + (this.state.results[i + 4].index)  + '.jpg'}  alt={i + 4} />
+                                <span className="card-title">Image {this.state.results[i + 4].index}</span>
+                            </div>
+                        </div>
+                    </div>
+                )
+            }
+            return resultImages;
+        }
+    }
+
+    onSelectChange(event) {
+        if(event.target.value === 1) {
+            alert("Intensity Method Selected");
+        }
+        else {
+            alert("Color Code Method Selected");
+        }
+        this.setState({method:event.target.value});
     }
 
     renderSelectImagePage() {
         return (
             <center>
                 Retrieval Method
-                <select className="browser-default" style={{width:'200px', border:'2px solid #BDBDBD', textAlign:'center'}}>
+                <select className="browser-default" style={{width:'200px', border:'2px solid #BDBDBD', textAlign:'center'}} onChange={(event) => this.onSelectChange(event)}>
                   <option value={1}>Intensity Method</option>
                   <option value={2}>Color Code Method</option>
                 </select>
