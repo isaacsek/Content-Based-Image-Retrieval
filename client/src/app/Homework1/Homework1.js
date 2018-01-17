@@ -8,7 +8,7 @@ import { colorHistogram }from "./output2";
 var images = [];
 var imageStyle = {
     height: '300px',
-    width: '300px'
+    width: '250px'
 }
 
 var inlineStyle={
@@ -283,7 +283,7 @@ class Landing extends Component {
     renderSelectImagePage() {
         return (
             <center>
-                Retrieval Method
+                Retrieval Method (Click an image to get started)
                 <select className="browser-default" style={{width:'200px', border:'2px solid #BDBDBD', textAlign:'center'}} onChange={(event) => this.onSelectChange(event)}>
                   <option value={1}>Intensity Method</option>
                   <option value={2}>Color Code Method</option>
