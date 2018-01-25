@@ -6,6 +6,7 @@ import * as actions from "../actions";
 import Header from "./Header/Header";
 import Landing from "./Landing/Landing";
 import Homework1 from "./Homework1/Homework1";
+import Homework2 from "./Homework2/Homework2";
 
 class App extends Component {
     componentDidMount() {
@@ -20,6 +21,7 @@ class App extends Component {
                         <Header />
                         <Route exact path="/" component={Landing} />
                         <Route exact path="/homework1" component={Homework1} />
+                        <Route exact path="/homework2" component={Homework2} />
                     </div>
                 </BrowserRouter>
             </div>
