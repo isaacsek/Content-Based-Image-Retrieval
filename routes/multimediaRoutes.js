@@ -1,8 +1,28 @@
-require('jimp/browser/lib/jimp');
-const Jimp = window.Jimp;
-var getPixels = require("get-pixels")
+const passport = require("passport");
+const Jimp = require("jimp");
 
-export  function get2Bits(int) {
+module.exports = (app) => {
+
+    app.get("/api/histogram", function(req, res) {
+        console.log(req.query);
+
+        if(req.query.method === "intensity") {
+            intensitySort(function(cb) {
+                res.send(cb);
+            })
+        }
+        else if(req.query.method === "colorcoded") {
+            colorCodeSort(function(cb) {
+                res.send(cb);
+            })
+        }
+        else {
+            res.send("test");
+        }
+    });
+}
+
+function get2Bits(int) {
     let a = (int >> 7) & 1;
     let b = (int >> 6) & 1;
     return "" + a.toString() + b.toString();
@@ -17,15 +37,16 @@ function createEmptyArray(length) {
 }
 
 function calculateIntensity(r, g, b) {
-    return (.299 *  r) + (.578 * g) + (.114 * b);
+    return Math.round((.299 *  r) + (.578 * g) + (.114 * b));
 }
 
-export function intensitySort(cb) {
+function intensitySort(cb) {
     const finalBuckets = [];
     for(let x = 0; x < 100; x++) {
         const intensities = createEmptyArray(25);
-
-    	Jimp.read(process.env.PUBLIC_URL + "/images/" + (x + 1) + ".jpg", function(err, image) {
+    	//Jimp.read("/static/images/" + (x + 1) + ".jpg", function(err, image) {
+        Jimp.read("./public/images/" + (x + 1) + ".jpg", function(err, image) {
+            if(err) cb(err);
             image.scan(0, 0, image.bitmap.width, image.bitmap.height, function (x, y, idx) {
                 let red   = this.bitmap.data[ idx + 0 ];
                 let green = this.bitmap.data[ idx + 1 ];
@@ -40,49 +61,31 @@ export function intensitySort(cb) {
                     intensities[bucket]++;
                 }
             });
-            finalBuckets.push(JSON.parse(JSON.stringify(intensities)));
-            //console.log(finalBuckets);
+            let img = {
+                index: x + 1,
+                intensities: JSON.parse(JSON.stringify(intensities))
+            }
+            finalBuckets.push(img);
             if(finalBuckets.length === 100) {
-                cb(finalBuckets);
+                finalBuckets.sort(function(a, b) {
+                    return a.index - b.index;
+                })
+                let result = [];
+                finalBuckets.map(function(k) {
+                    result.push(k.intensities);
+                })
+                cb(result);
             }
         });
-
-        // getPixels(process.env.PUBLIC_URL + "/images/" + (x + 1) + ".jpg", function(err, pixels) {
-        //     if(err) {
-        //         console.log("Bad image path")
-        //         return
-        //     }
-        //     for(let i = 0; i < pixels.size; i+=4) {
-        //         let red   = pixels.data[ i + 0 ];
-        //         let green = pixels.data[ i + 1 ];
-        //         let blue  = pixels.data[ i + 2 ];
-        //         let intensity = calculateIntensity(red, green, blue);
-        //         let bucket = Math.floor(intensity / 10);
-        //         //console.log(intensities);
-        //         if(bucket >= 24) {
-        //             intensities[24]++;
-        //         }
-        //         else {
-        //             intensities[bucket]++;
-        //         }
-        //     }
-        //     //console.log(intensities);
-        //     //console.log("got pixels", pixels);
-        //     finalBuckets.push(JSON.parse(JSON.stringify(intensities)));
-        //     //console.log(finalBuckets);
-        //     if(finalBuckets.length === 100) {
-        //         cb(finalBuckets);
-        //     }
-        // });
     }
 }
 
-export function colorCodeSort(cb) {
+function colorCodeSort(cb) {
     const finalBuckets = [];
     for(let x = 0; x < 100; x++) {
         const buckets = createEmptyArray(64);
 
-        Jimp.read(process.env.PUBLIC_URL + "/images/" + (x + 1) + ".jpg", function(err, image) {
+        Jimp.read("./public/images/" + (x + 1) + ".jpg", function(err, image) {
             image.scan(0, 0, image.bitmap.width, image.bitmap.height,  function (x, y, idx) { // 0, 0, image.bitmap.width, image.bitmap.height,
                 let red   = this.bitmap.data[ idx + 0 ];
                 let green = this.bitmap.data[ idx + 1 ];
@@ -94,17 +97,26 @@ export function colorCodeSort(cb) {
                 let bucket = parseInt(str, 2);
                 buckets[bucket]++;
             });
-            //buckets.push(image.bitmap.width * image.bitmap.height);
-            finalBuckets.push(JSON.parse(JSON.stringify(buckets)));
-
+            let img = {
+                index: x + 1,
+                bucketss: JSON.parse(JSON.stringify(buckets))
+            }
+            finalBuckets.push(img);
             if(finalBuckets.length === 100) {
-                cb(finalBuckets);
+                finalBuckets.sort(function(a, b) {
+                    return a.index - b.index;
+                })
+                let result = [];
+                finalBuckets.map(function(k) {
+                    result.push(k.bucketss);
+                })
+                cb(result);
             }
         });
     }
 }
 
-export function findDistances(buckets, img1, img2, cb) {
+function findDistances(buckets, img1, img2, cb) {
     let distance = 0;
     let a = img1 - 1;
     let b = img2 - 1;

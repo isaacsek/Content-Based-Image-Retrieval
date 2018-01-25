@@ -32,3 +32,9 @@ export const handleStripeToken = (token) => async dispatch => {
     // update user model
     dispatch({type: FETCH_USER, payload: res.data});
 }
+
+export const fetchMethod = () => async dispatch => {
+    const res = await axios.get("/api/histogram?method=colorcoded");
+    console.log("test", res.data);
+    dispatch({type: FETCH_USER, payload: res.data});
+}

@@ -11,6 +11,7 @@ require("./models/user");
 const passportConfig = require("./services/passport");
 const authRoutes = require("./routes/authRoutes");
 const billingRoutes = require("./routes/billingRoutes");
+const multimediaRoutes = require("./routes/multimediaRoutes");
 
 
 mongoose.connect(keys.mongoURI);
@@ -29,10 +30,16 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session()); // tell passport to use cookies
 
+const path = require('path');
+//app.use(express.static(path.join(__dirname, 'public')));
+//app.use('/static', express.static(path.join(__dirname + '/public')));
+//app.use('/static', express.static('public'))
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Route handling
 authRoutes(app);
 billingRoutes(app);
+multimediaRoutes(app);
 
 // app.get("/", (req, res) => {
 //     res.send({hello: 'world'});
