@@ -4,7 +4,7 @@ const Jimp = require("jimp");
 module.exports = (app) => {
 
     app.get("/api/histogram", function(req, res) {
-        console.log(req.query);
+        //console.log(req.query);
 
         if(req.query.method === "intensity") {
             intensitySort(function(cb) {
@@ -19,6 +19,27 @@ module.exports = (app) => {
         else {
             res.send("test");
         }
+    });
+
+    app.post("/api/findDistances", function(req, res) {
+        //console.log("here", req.body);
+        const results = [];
+        let buckets = req.body.buckets;
+        let image = req.body.image;
+        console.log("hest", buckets.length, image);
+
+        for(let i = 1; i <= 100; i++) {
+            findDistances(buckets, image, i, function(distance) {
+                const temp = {};
+                temp.index = i;
+                temp.distance = distance;
+                results.push(JSON.parse(JSON.stringify(temp)));
+            })
+        }
+        results.sort(function(a, b) {
+            return a.distance - b.distance;
+        });
+        res.send(results);
     });
 }
 
@@ -117,6 +138,7 @@ function colorCodeSort(cb) {
 }
 
 function findDistances(buckets, img1, img2, cb) {
+    //console.log("length", buckets.length);
     let distance = 0;
     let a = img1 - 1;
     let b = img2 - 1;

@@ -33,8 +33,8 @@ export const handleStripeToken = (token) => async dispatch => {
     dispatch({type: FETCH_USER, payload: res.data});
 }
 
-export const fetchMethod = () => async dispatch => {
-    const res = await axios.get("/api/histogram?method=colorcoded");
+export const fetchHistogram = (histogram) => async dispatch => {
+    const res = await axios.get("/api/histogram?method=" + histogram);
     console.log("test", res.data);
-    dispatch({type: FETCH_USER, payload: res.data});
+    dispatch({type: "HISTOGRAM", payload: res.data});
 }

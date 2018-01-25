@@ -20,6 +20,7 @@ class IntensityMethod extends Component {
         this.state = {
             page: 1,
             selectedImage: null,
+            selectedImages: [],
         };
     }
 
@@ -45,6 +46,14 @@ class IntensityMethod extends Component {
 
     selectImage(img) {
         this.setState({selectedImage: img});
+
+        let temp = this.state.selectedImages;
+        temp.push(img);
+        console.log(temp);
+        this.setState({selectedImages: temp});
+        //this.state.selectedImages.push(img);
+
+
         this.loadResults(img);
     }
 
@@ -72,11 +81,45 @@ class IntensityMethod extends Component {
     renderResults() {
         return (
             <div style={{marginTop: '25px', textAlign:'center'}}>
-                <div><h5 className="btn"  style={inlineStyle} onClick={() => this.setState({results:null})}>Results: Image {this.state.selectedImage}</h5></div>
-                {this.renderImageResults()}
+                <div><h5 className="btn"  style={inlineStyle} onClick={() => this.setState({results:null})}>Results: Image {JSON.stringify(this.state.selectedImages)}</h5></div>
+
+                <div className="row">
+                    <div className="col s4">
+                        Relevant Images
+                        {this.renderSelectedImages()}
+                    </div>
+                    <div className="col s8">
+                        Results
+                        {this.renderImageResults()}
+                    </div>
+                </div>
                 <button className="btn red" style={{marginTop:'15px', marginBottom:'15px'}} onClick={() => this.setState({results:null})}>Back</button>
             </div>
         );
+    }
+
+    renderSelectedImages() {
+        const resultImages1 = [];
+
+        for(let i = 0; i < this.state.selectedImages.length; i++) {
+            resultImages1.push(
+                <div key={i}>
+                    <div style={inlineStyle} className="card">
+                        <div className="card-image">
+                            <img style={imageStyle} src={process.env.PUBLIC_URL + '/images/' + (this.state.selectedImages[i]) + '.jpg'} alt={i}/>
+                            <span className="card-title">Image {this.state.results[i].index}</span>
+                        </div>
+                    </div>
+                </div>
+            )
+        }
+        return resultImages1;
+    }
+
+    handleImageClick(index, self) {
+        this.setState({selectedImage:index});
+        //alert(index);
+        this.selectImage(index);
     }
 
     renderImageResults() {
@@ -86,14 +129,14 @@ class IntensityMethod extends Component {
                 <div key={i}>
                     <div style={inlineStyle} className="card">
                         <div className="card-image">
-                            <img style={imageStyle} src={process.env.PUBLIC_URL + '/images/' + (this.state.results[i].index) + '.jpg'} alt={i}/>
+                            <img style={imageStyle} src={process.env.PUBLIC_URL + '/images/' + (this.state.results[i].index) + '.jpg'} onClick={this.handleImageClick.bind(this, (this.state.results[i].index), this)} />
                             <span className="card-title">Image {this.state.results[i].index}</span>
                         </div>
                     </div>
                     <span className="mr-2"/>
                     <div style={inlineStyle}  className="card" >
                         <div className="card-image">
-                            <img style={imageStyle} src={process.env.PUBLIC_URL + '/images/' + (this.state.results[i + 1].index)  + '.jpg'} alt={i + 1} />
+                            <img style={imageStyle} src={process.env.PUBLIC_URL + '/images/' + (this.state.results[i + 1].index)  + '.jpg'} alt={i + 1}  onClick={this.handleImageClick.bind(this, (this.state.results[i + 1].index), this)}/>
                             <span className="card-title">Image {this.state.results[i + 1].index}</span>
                         </div>
                     </div>
@@ -101,11 +144,11 @@ class IntensityMethod extends Component {
                     <span className="mr-2"/>
                     <div style={inlineStyle}  className="card" >
                         <div className="card-image">
-                            <img style={imageStyle} src={process.env.PUBLIC_URL + '/images/' + (this.state.results[i + 2].index)  + '.jpg'} alt={i + 2} />
+                            <img style={imageStyle} src={process.env.PUBLIC_URL + '/images/' + (this.state.results[i + 2].index)  + '.jpg'} alt={i + 2} onClick={this.handleImageClick.bind(this, (this.state.results[i + 2].index), this)} />
                             <span className="card-title">Image {this.state.results[i + 2].index}</span>
                         </div>
                     </div>
-
+{/*
                     <span className="mr-2"/>
                     <div style={inlineStyle}  className="card" >
                         <div className="card-image">
@@ -120,7 +163,7 @@ class IntensityMethod extends Component {
                             <img style={imageStyle} src={process.env.PUBLIC_URL + '/images/' + (this.state.results[i + 4].index)  + '.jpg'}  alt={i + 4} />
                             <span className="card-title">Image {this.state.results[i + 4].index}</span>
                         </div>
-                    </div>
+                    </div> */}
                 </div>
             )
         }
@@ -130,7 +173,8 @@ class IntensityMethod extends Component {
     render() {
         return (
             <div style={{marginTop:'25px'}}>
-                <div><h4>Method: Intensity</h4></div>
+                <div><h4>Method: Intensity + Color Coded</h4></div>
+                {this.state.selectedImages}
                 {this.renderContent()}
             </div>
 
