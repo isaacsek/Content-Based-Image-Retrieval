@@ -52,6 +52,12 @@ class Homework2 extends Component {
                 <div>
                     {this.renderCIBRMethod()}
                 </div>
+
+                <div className="fixed-action-btn" onClick={() => alert("Select method by clicking top row buttons. Select images to get results.")}>
+                    <a className="btn-floating btn-large red">
+                      <i className="large material-icons">help_outline</i>
+                    </a>
+                  </div>
             </div>
         );
     }
