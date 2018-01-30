@@ -107,28 +107,43 @@ module.exports = (app) => {
                 let mean = mathjs.mean(nums);
                 stds.push(std);
                 means.push(std);
-                console.log("here", std, mean);
+                //console.log("here", std, mean);
             }
 
+            //const minStd = mathjs.min(stds);
+            let minStd = Number.MAX_SAFE_INTEGER;
+            for(let i = 0; i < stds.length; i++) {
+                if(stds[i] !== 0 && stds[i] < minStd) {
+                    minStd = stds[i];
+                }
+            }
 
-            // check for zeros
-            const minStd = mathjs.min(stds);
             for(let i = 0; i < stds.length; i++) {
                 if(stds[i] === 0) {
-                    if(means[i] === 0) {
+                    let avg = findAvgOfColulmn(normalized, i);
+                    if(avg === 0) {
                         stds[i] = 0;
                     }
                     else {
                         stds[i] = (minStd * .5);
                     }
                 }
+                //console.log("std =", stds[i]);
             }
+
+            let sumOfWeights = 0;
             for(let i = 0; i < stds.length; i++) {
-                weights.push(1/(stds[i]));
+                if(stds[i] === 0) {
+                    weights.push(0);
+                }
+                else {
+                    let updatedWeight = 1/(stds[i]);
+                    weights.push(updatedWeight);
+                    sumOfWeights += updatedWeight;
+                }
             }
-            const sumOfWeights = mathjs.sum(weights);
+
             for(let i = 0; i < weights.length; i++) {
-                console.log("weight", i, weights[i] / sumOfWeights);
                 weights[i] = weights[i] / sumOfWeights;
             }
             res.send(weights);
@@ -149,6 +164,14 @@ function findDistancesRF(buckets, weights, img1, img2, cb) {
             cb(distance);
         }
     }
+}
+
+function findAvgOfColulmn(histogram, col) {
+    let sum = 0;
+    for(let i = 0; i < histogram.length; i++) {
+        sum += histogram[i][col];
+    }
+    return sum / histogram.length;
 }
 
 function combineHistograms(a, b, cb) {

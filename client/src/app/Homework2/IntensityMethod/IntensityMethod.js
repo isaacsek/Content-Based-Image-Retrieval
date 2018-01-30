@@ -66,8 +66,13 @@ class IntensityMethod extends Component {
     renderResults() {
         return (
             <div style={{marginTop: '25px', textAlign:'center'}}>
-                <div><h5 className="btn"  style={inlineStyle} onClick={() => this.setState({results:null})}>Results: Image {this.state.selectedImage}</h5></div>
-                {this.renderImageResults()}
+                <div>
+                    <div className="btn"  style={inlineStyle} onClick={() => this.setState({results:null})}>Results for image {this.state.selectedImage}</div>
+                    <div className="btn red ml-2" onClick={() => this.setState({results:null})}>Go Back</div>
+                </div>
+                <div style={{marginTop:'15px'}}>
+                    {this.renderImageResults()}
+                </div>
                 <button className="btn red" style={{marginTop:'15px', marginBottom:'15px'}} onClick={() => this.setState({results:null})}>Back</button>
             </div>
         );
@@ -121,10 +126,17 @@ class IntensityMethod extends Component {
         return resultImages;
     }
 
+    renderHelpMessage() {
+        if(this.state.selectedImage < 1) {
+            return <div>Select an image to get started!</div>;
+        }
+    }
+
     render() {
         return (
             <div style={{marginTop:'25px'}}>
                 <div><h4>Method: Intensity</h4></div>
+                {this.renderHelpMessage()}
                 {this.renderContent()}
             </div>
 

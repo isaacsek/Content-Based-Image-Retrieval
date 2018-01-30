@@ -39,33 +39,31 @@ class IntensityMethod extends Component {
             temp.push(1/89);
         }
         this.setState({weights: JSON.parse(JSON.stringify(temp))});
-        //console.log(JSON.stringify(histogram.data));
-        //console.log(histogram.data.length, histogram.data[0].length);
     }
 
-    async getResults(img) {
+    async getResults() {
         if(!this.state.buckets) {
             this.loadHistogram();
         }
         else {
             const normalizedWeights = await axios.post("/api/findWeightsRF", { images: this.state.selectedImages });
-            console.log(normalizedWeights.data);
-            const results = await axios.post("/api/findDistancesRF", { image: img, weights:this.state.weights });
+            const results = await axios.post("/api/findDistancesRF", { image: this.state.selectedImage, weights:this.state.weights });
             this.setState({results: results.data});
         }
     }
 
     selectImage(img) {
-        this.setState({selectedImage: img});
+        if(this.state.selectedImages && this.state.selectedImages.includes(img)) {
+            alert("Cannot re-select images to query!");
+        }
+        else {
+            this.setState({selectedImage: img});
+            let temp = this.state.selectedImages;
+            temp.push(img);
 
-        let temp = this.state.selectedImages;
-        temp.push(img);
-        console.log(temp);
-        this.setState({selectedImages: temp});
-        //this.state.selectedImages.push(img);
-
-
-        this.getResults(img);
+            this.setState({selectedImages: temp});
+            //this.getResults(img);
+        }
     }
 
     renderSelectImages() {
@@ -77,7 +75,7 @@ class IntensityMethod extends Component {
     }
 
     renderContent() {
-        if(this.state.results) {
+        if(this.state.selectedImages.length !== 0) {
             return (
                 <div>
                     {this.renderResults()}
@@ -92,39 +90,71 @@ class IntensityMethod extends Component {
     renderResults() {
         return (
             <div style={{marginTop: '25px', textAlign:'center'}}>
-                <div><h5 className="btn"  style={inlineStyle} onClick={() => this.setState({results:null})}>Results: Image {JSON.stringify(this.state.selectedImages)}</h5></div>
+                <div>
+                    <div className="btn red" style={inlineStyle} onClick={() => this.setState({selectedImages: []})}>Go Back</div>
+                    {/* <div className="btn"  style={inlineStyle} onClick={() => this.setState({results:null})}>Results: Image {JSON.stringify(this.state.selectedImages)}</div> */}
+                    <div className="ml-2 btn purple" style={inlineStyle} onClick={() => this.getResults()}>Query Images</div>
+                </div>
 
                 <div className="row">
-                    <div className="col s4">
-                        Relevant Images
+                    <div className="col s6">
+                        <div className="btn orange">Relevant Images: {JSON.stringify(this.state.selectedImages)}</div>
                         {this.renderSelectedImages()}
                     </div>
-                    <div className="col s8">
-                        Results
+                    <div className="col s6">
+                        <div className="btn red lighten-2">Results:</div>
                         {this.renderImageResults()}
                     </div>
                 </div>
-                <button className="btn red" style={{marginTop:'15px', marginBottom:'15px'}} onClick={() => this.setState({results:null})}>Back</button>
+                <button className="btn red" style={{marginTop:'15px', marginBottom:'15px'}} onClick={() => this.setState({selectedImages: []})}>Back</button>
             </div>
         );
     }
 
+
+
     renderSelectedImages() {
         const resultImages1 = [];
 
-        for(let i = 0; i < this.state.selectedImages.length; i++) {
+        for(let i = 0; i < this.state.selectedImages.length; i+=3) {
             resultImages1.push(
-                <div key={i}>
+                <div key={i} style={inlineStyle}>
                     <div style={inlineStyle} className="card">
                         <div className="card-image">
                             <img style={imageStyle} src={process.env.PUBLIC_URL + '/images/' + (this.state.selectedImages[i]) + '.jpg'} alt={i}/>
-                            <span className="card-title">Image {this.state.results[i].index}</span>
+                            <span className="card-title">Image {this.state.selectedImages[i]}</span>
                         </div>
                     </div>
                 </div>
             )
+
+            if(i + 1 < this.state.selectedImages.length) {
+                resultImages1.push(
+                    <div key={i + 1} style={inlineStyle} className="ml-2">
+                        <div style={inlineStyle} className="card">
+                            <div className="card-image">
+                                <img style={imageStyle} src={process.env.PUBLIC_URL + '/images/' + (this.state.selectedImages[i + 1]) + '.jpg'} alt={i}/>
+                                <span className="card-title">Image {this.state.selectedImages[i + 1]}</span>
+                            </div>
+                        </div>
+                    </div>
+                )
+            }
+
+            if(i + 2 < this.state.selectedImages.length) {
+                resultImages1.push(
+                    <div key={i + 1} style={inlineStyle} className="ml-2">
+                        <div style={inlineStyle} className="card">
+                            <div className="card-image">
+                                <img style={imageStyle} src={process.env.PUBLIC_URL + '/images/' + (this.state.selectedImages[i + 2]) + '.jpg'} alt={i}/>
+                                <span className="card-title">Image {this.state.selectedImages[i + 2]}</span>
+                            </div>
+                        </div>
+                    </div>
+                )
+            }
         }
-        return resultImages1;
+        return <div>{resultImages1}</div>;
     }
 
     handleImageClick(index, self) {
@@ -134,6 +164,9 @@ class IntensityMethod extends Component {
     }
 
     renderImageResults() {
+        if(!this.state.results) {
+            return (<div>Click Query Images to see  results!</div>);
+        }
         const resultImages = [];
         for(let i = 0; i < 100; i+=5) {
             resultImages.push(
@@ -159,7 +192,7 @@ class IntensityMethod extends Component {
                             <span className="card-title">Image {this.state.results[i + 2].index}</span>
                         </div>
                     </div>
-{/*
+                    {/*
                     <span className="mr-2"/>
                     <div style={inlineStyle}  className="card" >
                         <div className="card-image">
@@ -181,10 +214,17 @@ class IntensityMethod extends Component {
         return resultImages;
     }
 
+    renderHelpMessage() {
+        if(this.state.selectedImage < 1) {
+            return <div>Select an image to get started!</div>;
+        }
+    }
+
     render() {
         return (
             <div style={{marginTop:'25px'}}>
                 <div><h4>Method: Intensity + Color Coded</h4></div>
+                {this.renderHelpMessage()}
                 {this.state.selectedImages}
                 {this.renderContent()}
             </div>
