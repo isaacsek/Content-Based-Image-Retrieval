@@ -62,6 +62,10 @@ class IntensityMethod extends Component {
             temp.push(img);
 
             this.setState({selectedImages: temp});
+
+            if(temp.length === 1) {
+                this.getResults(img);
+            }
             //this.getResults(img);
         }
     }
@@ -93,6 +97,7 @@ class IntensityMethod extends Component {
                 <div>
                     <div className="btn red" style={inlineStyle} onClick={() => this.setState({selectedImages: []})}>Go Back</div>
                     {/* <div className="btn"  style={inlineStyle} onClick={() => this.setState({results:null})}>Results: Image {JSON.stringify(this.state.selectedImages)}</div> */}
+                    <div className="ml-2 btn magenta" style={inlineStyle} onClick={() => alert("Click images from the right side, once done selecting images, click 'Query Images' to see results")}>Help</div>
                     <div className="ml-2 btn purple" style={inlineStyle} onClick={() => this.getResults()}>Query Images</div>
                 </div>
 
@@ -102,7 +107,7 @@ class IntensityMethod extends Component {
                         {this.renderSelectedImages()}
                     </div>
                     <div className="col s6">
-                        <div className="btn red lighten-2">Results:</div>
+                        <div className="btn red lighten-2">Results</div>
                         {this.renderImageResults()}
                     </div>
                 </div>
