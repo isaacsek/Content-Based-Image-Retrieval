@@ -45,9 +45,9 @@ class Homework2 extends Component {
             <div style={{textAlign:'center'}}>
                 <h3 className="mt-2 mb-2">Simple Content-Based Image Retrieval System</h3>
                 <div className="mt-2 mb-2" style={{marginTop:'25px'}}>
-                    <button className="waves-effect waves-light btn green"  style={{width:'250px'}} onClick={() => this.selectCIBRMethod("intensity")}>Intesity</button>
-                    <button className="waves-effect waves-light btn blue ml-2" style={{width:'250px'}}  onClick={() => this.selectCIBRMethod("Both")}>Intesity + Color Coded</button>
-                    <button className="waves-effect waves-light btn yellow darken-2 ml-2" style={{width:'250px'}}  onClick={() => this.selectCIBRMethod("colorcoded")}>Color Coded</button>
+                    <button className="waves-effect waves-light btn green"  style={{width:'300px'}} onClick={() => this.selectCIBRMethod("intensity")}>Intesity</button>
+                    <button className="waves-effect waves-light btn blue ml-2" style={{width:'300px'}}  onClick={() => this.selectCIBRMethod("Both")}>Intesity + Color Coded + RF</button>
+                    <button className="waves-effect waves-light btn yellow darken-2 ml-2" style={{width:'300px'}}  onClick={() => this.selectCIBRMethod("colorcoded")}>Color Coded</button>
                 </div>
                 <div>
                     {this.renderCIBRMethod()}

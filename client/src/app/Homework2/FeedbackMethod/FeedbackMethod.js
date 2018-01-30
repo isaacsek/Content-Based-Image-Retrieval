@@ -6,7 +6,7 @@ import axios from "axios";
 
 var imageStyle = {
     height: '300px',
-    width: '250px'
+    width: '10vw'
 }
 
 var inlineStyle={
@@ -148,7 +148,7 @@ class IntensityMethod extends Component {
 
             if(i + 2 < this.state.selectedImages.length) {
                 resultImages1.push(
-                    <div key={i + 1} style={inlineStyle} className="ml-2">
+                    <div key={i + 2} style={inlineStyle} className="ml-2 mr-2">
                         <div style={inlineStyle} className="card">
                             <div className="card-image">
                                 <img style={imageStyle} src={process.env.PUBLIC_URL + '/images/' + (this.state.selectedImages[i + 2]) + '.jpg'} alt={i}/>
@@ -173,7 +173,7 @@ class IntensityMethod extends Component {
             return (<div>Click Query Images to see  results!</div>);
         }
         const resultImages = [];
-        for(let i = 0; i < 100; i+=5) {
+        for(let i = 0; i < 100; i+=4) {
             resultImages.push(
                 <div key={i}>
                     <div style={inlineStyle} className="card">
@@ -197,8 +197,24 @@ class IntensityMethod extends Component {
                             <span className="card-title">Image {this.state.results[i + 2].index}</span>
                         </div>
                     </div>
-                    {/*
+
                     <span className="mr-2"/>
+                    <div style={inlineStyle}  className="card" >
+                        <div className="card-image">
+                            <img style={imageStyle} src={process.env.PUBLIC_URL + '/images/' + (this.state.results[i + 3].index)  + '.jpg'} alt={i + 3} onClick={this.handleImageClick.bind(this, (this.state.results[i + 3].index), this)} />
+                            <span className="card-title">Image {this.state.results[i + 3].index}</span>
+                        </div>
+                    </div>
+
+                    {/* <span className="mr-2"/>
+                    <div style={inlineStyle}  className="card" >
+                        <div className="card-image">
+                            <img style={imageStyle} src={process.env.PUBLIC_URL + '/images/' + (this.state.results[i + 4].index)  + '.jpg'} alt={i + 4} onClick={this.handleImageClick.bind(this, (this.state.results[i + 4].index), this)} />
+                            <span className="card-title">Image {this.state.results[i + 4].index}</span>
+                        </div>
+                    </div> */}
+
+                    {/* <span className="mr-2"/>
                     <div style={inlineStyle}  className="card" >
                         <div className="card-image">
                             <img style={imageStyle} src={process.env.PUBLIC_URL + '/images/' + (this.state.results[i + 3].index)  + '.jpg'}  alt={i + 3} />
