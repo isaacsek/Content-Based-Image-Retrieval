@@ -29,9 +29,10 @@ class IntensityMethod extends Component {
     }
 
     async loadHistogram() {
-        const histogram = await axios.get("/api/histogram?method=" + "intensity");
+        const histogram = await axios.get("/api/histogram?method=" + "both");
         this.setState({buckets:histogram.data});
-        return histogram;
+        console.log(JSON.stringify(histogram.data));
+        //console.log(histogram.data.length, histogram.data[0].length);
     }
 
     async loadResults(img) {

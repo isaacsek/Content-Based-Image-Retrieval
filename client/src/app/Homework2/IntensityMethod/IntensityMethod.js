@@ -16,7 +16,6 @@ var inlineStyle={
 class IntensityMethod extends Component {
     constructor(props) {
         super(props);
-
         this.state = {
             page: 1,
             selectedImage: null,
@@ -30,10 +29,9 @@ class IntensityMethod extends Component {
     async loadHistogram() {
         const histogram = await axios.get("/api/histogram?method=" + "intensity");
         this.setState({buckets:histogram.data});
-        return histogram;
     }
 
-    async loadResults(img) {
+    async getResults(img) {
         if(!this.state.buckets) {
             this.loadHistogram();
         }
@@ -45,7 +43,7 @@ class IntensityMethod extends Component {
 
     selectImage(img) {
         this.setState({selectedImage: img});
-        this.loadResults(img);
+        this.getResults(img);
     }
 
     renderSelectImages() {
@@ -58,11 +56,7 @@ class IntensityMethod extends Component {
 
     renderContent() {
         if(this.state.results) {
-            return (
-                <div>
-                    {this.renderResults()}
-                </div>
-            )
+            return (<div>{this.renderResults()}</div>);
         }
         else {
             return this.renderSelectImages();

@@ -1,5 +1,9 @@
 const passport = require("passport");
 const Jimp = require("jimp");
+const intensityHisto = require("../public/histograms/intensityHistogram");
+const colorCodeHisto = require("../public/histograms/colorCodeHistogram");
+const normalized = require("../public/histograms/normalized");
+const mathjs = require("mathjs");
 
 module.exports = (app) => {
 
@@ -7,17 +11,24 @@ module.exports = (app) => {
         //console.log(req.query);
 
         if(req.query.method === "intensity") {
-            intensitySort(function(cb) {
-                res.send(cb);
-            })
+            // intensitySort(function(cb) {
+            //     res.send(cb);
+            // })
+            res.send(intensityHisto);
         }
         else if(req.query.method === "colorcoded") {
-            colorCodeSort(function(cb) {
-                res.send(cb);
-            })
+            // colorCodeSort(function(cb) {
+            //     res.send(cb);
+            // })
+            res.send(colorCodeHisto);
         }
         else {
-            res.send("test");
+            // combineHistograms(intensityHisto, colorCodeHisto, function(result) {
+            //     normalizeHistogram(result, function(h) {
+            //         res.send(h);
+            //     });
+            // });
+            res.send(normalized);
         }
     });
 
@@ -41,6 +52,66 @@ module.exports = (app) => {
         });
         res.send(results);
     });
+}
+
+function combineHistograms(a, b, cb) {
+    let combined = [];
+    for(let i = 0; i < 100; i++) {
+        //console.log(i, a[i].length, b[i].length);
+
+        let temp = a[i].concat(b[i]);
+        //console.log(temp);
+        combined.push(JSON.parse(JSON.stringify(temp)));
+
+        if(i === 99) {
+            //console.log("complete");
+            cb(JSON.parse(JSON.stringify(combined)));
+        }
+        //cb(JSON.parse(JSON.stringify(combined)));
+    }
+}
+
+function normalizeHistogram(histogram, cb) {
+    const avgOfColumn = [];
+    const stdOfColumn = [];
+
+    // divide counts by pixel size, to get weights
+    for(let row = 0; row < histogram.length; row++) {
+        for(let col = 0; col < histogram[row].length; col++) {
+            histogram[row][col] = histogram[row][col] / 98034;
+        }
+    }
+
+    for(let i = 0; i < 89; i++) {
+        let nums = [];
+        for(let j = 0; j < 100; j++) {
+            nums.push(histogram[j][i]);
+        }
+        let avg = mathjs.mean(nums);
+        let std = mathjs.std(nums);
+        avgOfColumn.push(avg);
+        stdOfColumn.push(std);
+        //console.log("here", avgOfColumn, stdOfColumn);
+    }
+
+    for(let row = 0; row < histogram.length; row++) {
+
+        for(let col = 0; col < histogram[row].length; col++) {
+            let temp = (histogram[row][col] - avgOfColumn[col]) / stdOfColumn[col];
+            if(!temp) {
+                histogram[row][col] = 0;
+            }
+            else {
+                histogram[row][col] = (histogram[row][col] - avgOfColumn[col]) / stdOfColumn[col];
+            }
+
+            //console.log(avgOfColumn[col], stdOfColumn[col],  row, col, temp, histogram[row][col]);
+            //console.log("here2", avgOfColumn, stdOfColumn);
+            console.log(row, col, avgOfColumn[col], stdOfColumn[col], temp);
+        }
+    }
+
+    cb(JSON.parse(JSON.stringify(histogram)));
 }
 
 function get2Bits(int) {
