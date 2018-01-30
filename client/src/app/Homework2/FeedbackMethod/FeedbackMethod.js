@@ -26,21 +26,31 @@ class IntensityMethod extends Component {
 
     componentWillMount() {
         this.loadHistogram();
+
+
     }
 
     async loadHistogram() {
         const histogram = await axios.get("/api/histogram?method=" + "both");
         this.setState({buckets:histogram.data});
-        console.log(JSON.stringify(histogram.data));
+
+        let temp = [];
+        for(let i = 0; i < 89; i++) {
+            temp.push(1/89);
+        }
+        this.setState({weights: JSON.parse(JSON.stringify(temp))});
+        //console.log(JSON.stringify(histogram.data));
         //console.log(histogram.data.length, histogram.data[0].length);
     }
 
-    async loadResults(img) {
+    async getResults(img) {
         if(!this.state.buckets) {
             this.loadHistogram();
         }
         else {
-            const results = await axios.post("/api/findDistances", {image: img, buckets: this.state.buckets});
+            const normalizedWeights = await axios.post("/api/findWeightsRF", { images: this.state.selectedImages });
+            console.log(normalizedWeights.data);
+            const results = await axios.post("/api/findDistancesRF", { image: img, weights:this.state.weights });
             this.setState({results: results.data});
         }
     }
@@ -55,7 +65,7 @@ class IntensityMethod extends Component {
         //this.state.selectedImages.push(img);
 
 
-        this.loadResults(img);
+        this.getResults(img);
     }
 
     renderSelectImages() {

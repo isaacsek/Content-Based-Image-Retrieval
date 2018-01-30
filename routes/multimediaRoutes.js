@@ -52,6 +52,103 @@ module.exports = (app) => {
         });
         res.send(results);
     });
+
+    app.post("/api/findDistancesRF", function(req, res) {
+        const results = [];
+
+        let image = req.body.image;
+        let weights = req.body.weights;
+        let rfBuckets = normalized;
+        for(let i = 1; i <= 100; i++) {
+            findDistancesRF(rfBuckets, weights, image, i, function(distance) {
+                const temp = {};
+                temp.index = i;
+                temp.distance = distance;
+                results.push(JSON.parse(JSON.stringify(temp)));
+            })
+        }
+        results.sort(function(a, b) {
+            return a.distance - b.distance;
+        });
+        res.send(results);
+    });
+
+    app.post("/api/findWeightsRF", function(req, res) {
+        const weights = [];
+        let selectedImages = req.body.images;
+        let buckets = normalized;
+
+        if(selectedImages.length === 1) {
+            let temp = [];
+            for(let i = 0; i < 89; i++) {
+                temp.push(1/89);
+            }
+            res.send(temp);
+        }
+        else {
+            // find standard deviation of normalized features of seleted images
+            // check for std or mean of 0
+            // updated weight = 1/std
+            // normalized weight = weight / sumOfWeights
+
+            const imageFeatures = [];
+            for(let i = 0; i < selectedImages.length; i++) {
+                imageFeatures.push(buckets[selectedImages[i]]);
+            }
+
+            const stds = [];
+            const means = [];
+            for(let i = 0; i < imageFeatures[0].length; i++) {
+                let nums = [];
+                for(let j = 0; j < 100; j++) {
+                    nums.push(buckets[j][i]);
+                }
+                let std = mathjs.std(nums);
+                let mean = mathjs.mean(nums);
+                stds.push(std);
+                means.push(std);
+                console.log("here", std, mean);
+            }
+
+
+            // check for zeros
+            const minStd = mathjs.min(stds);
+            for(let i = 0; i < stds.length; i++) {
+                if(stds[i] === 0) {
+                    if(means[i] === 0) {
+                        stds[i] = 0;
+                    }
+                    else {
+                        stds[i] = (minStd * .5);
+                    }
+                }
+            }
+            for(let i = 0; i < stds.length; i++) {
+                weights.push(1/(stds[i]));
+            }
+            const sumOfWeights = mathjs.sum(weights);
+            for(let i = 0; i < weights.length; i++) {
+                console.log("weight", i, weights[i] / sumOfWeights);
+                weights[i] = weights[i] / sumOfWeights;
+            }
+            res.send(weights);
+        }
+    });
+}
+
+function findDistancesRF(buckets, weights, img1, img2, cb) {
+    let distance = 0;
+    let a = img1 - 1;
+    let b = img2 - 1;
+    for(let bucket = 0; bucket < buckets[0].length; bucket++) {
+        let aVal = buckets[img1 - 1][bucket] / 98034;
+        let bVal = buckets[img2 - 1][bucket] / 98034;
+        distance += (weights[bucket] * Math.abs(aVal - bVal));
+
+        if(bucket === buckets[0].length - 1) {
+            cb(distance);
+        }
+    }
 }
 
 function combineHistograms(a, b, cb) {
