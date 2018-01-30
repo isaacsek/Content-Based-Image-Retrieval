@@ -24,6 +24,7 @@
     "express": "^4.16.2",
     "get-pixels": "^3.3.0",
     "jimp": "^0.2.27",
+    "mathjs": "^3.20.1",
     "mongoose": "^4.12.4",
     "nodemon": "^1.12.1",
     "passport": "^0.4.0",
