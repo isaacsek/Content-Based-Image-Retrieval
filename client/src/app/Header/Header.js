@@ -47,8 +47,8 @@ class Header extends Component {
                     </Link>
                     <ul className="right">
                         <ul className="right">
-                            <li key="1"><Link to={"/homework1"}>Homework 1</Link></li>
-                            <li key="2"><Link to={"/homework2"}>Homework 2</Link></li>
+                            <li key="1"><Link to={"/homework1"}>CBIR 1</Link></li>
+                            <li key="2"><Link to={"/homework2"}>CBIR 2</Link></li>
                         </ul>
                     </ul>
                 </div>
